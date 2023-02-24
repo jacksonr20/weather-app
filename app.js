@@ -1,9 +1,14 @@
 import colors from 'colors';
+import * as dotenv from 'dotenv';
 import { inquirerMenu } from './helpers/inquirer.js';
 import { pause } from './helpers/pause/pause.js';
 import { readInput } from './helpers/read-input/readInput.js';
+import { Searches } from './models/searches.js';
+
+dotenv.config();
 
 const main = async(  ) => {
+    const searches = new Searches();
     let opt = 0;
 
     do {
@@ -13,7 +18,8 @@ const main = async(  ) => {
             case 1:
                 // Show message
                 const place = await readInput('City:' ); 
-                console.log(place);
+                searches.city( place );
+
 
                 // Find places
 

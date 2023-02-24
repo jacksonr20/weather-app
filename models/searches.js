@@ -1,3 +1,5 @@
+import axios from "axios";
+
 class Searches {
     historical = ['Maracaibo', 'Medellin', 'San Jose'];
     
@@ -5,11 +7,32 @@ class Searches {
         // TODO: Read DB //
     }
 
-    async city( place = '' ) {
-        // HTTP Request;
-        console.log( place );
+    get paramMapBox() {
+        return {
+            'access_token': process.env.MAPBOX_KEY,
+            'language': 'es',
+            'limit': 2,
+        }
+    }
 
-        return []; // Return places
+    async city( place = '' ) {
+        console.clear();
+        try {
+            // HTTP Request;
+            const url = axios.create({
+                baseURL: `https://api.mapbox.com/geocoding/v5/mapbox.places/${ place }.json`,
+                params: this.paramMapBox,
+            });
+
+            const res = await url.get();
+            console.log(res.data);
+
+            return []; // Return places
+        } catch (error) {
+            console.log('\nThere was an error trying to get that request\n');
+            return [];
+        }
+
     }
 }
 
