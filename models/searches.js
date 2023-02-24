@@ -25,9 +25,13 @@ class Searches {
             });
 
             const res = await url.get();
-            console.log(res.data);
+            return res.data.features.map( ({id, place_name, center }) => ({
+                id: id,
+                name: place_name,
+                lng: center[0],
+                lat: center[1],
+            }));
 
-            return []; // Return places
         } catch (error) {
             console.log('\nThere was an error trying to get that request\n');
             return [];

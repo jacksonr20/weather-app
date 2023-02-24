@@ -1,8 +1,10 @@
 import colors from 'colors';
 import * as dotenv from 'dotenv';
 import { inquirerMenu } from './helpers/inquirer.js';
+import { menuPlaceInfo } from './helpers/menu-info/menuInfo.js';
 import { pause } from './helpers/pause/pause.js';
 import { readInput } from './helpers/read-input/readInput.js';
+import { displayPlaces } from './helpers/select-place/selectPlaces.js';
 import { Searches } from './models/searches.js';
 
 dotenv.config();
@@ -16,23 +18,25 @@ const main = async(  ) => {
 
         switch (opt) {
             case 1:
-                // Show message
-                const place = await readInput('City:' ); 
-                searches.city( place );
-
-
-                // Find places
-
-                // Select place
+                const cityToSearch = await readInput('City:' ); 
+                
+                const placesResult = await searches.city( cityToSearch );
+                
+                const id = await displayPlaces( placesResult );
+                const selectedPlace = placesResult.find( ({id}) =>  id === id );
 
                 // Weather
-
-                // Show results
-
+                // TODO: Weather //
+                
+                menuPlaceInfo( selectedPlace );
                 break;
-        
-            default:
+                
+                default:
+                    console.log('See you again!');
                 break;
+            case 2:
+                // TODO: Historical //
+                break
         }
 
         if ( opt !== 0 ) {
@@ -40,9 +44,6 @@ const main = async(  ) => {
         } 
             
     } while (opt !== 0);
-
-
-
 }
 
 main();
