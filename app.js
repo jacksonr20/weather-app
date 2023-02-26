@@ -1,49 +1,55 @@
+/* eslint-disable no-await-in-loop */
+// eslint-disable-next-line no-unused-vars
 import colors from 'colors';
 import * as dotenv from 'dotenv';
-import { inquirerMenu } from './helpers/inquirer.js';
-import { menuPlaceInfo } from './helpers/menu-info/menuInfo.js';
-import { pause } from './helpers/pause/pause.js';
-import { readInput } from './helpers/read-input/readInput.js';
-import { displayPlaces } from './helpers/select-place/selectPlaces.js';
+import {
+  pause,
+  readInput,
+  inquirerMenu,
+  menuPlaceInfo,
+  displayPlaces,
+} from './helpers/index.js';
 import { Searches } from './models/searches.js';
 
 dotenv.config();
 
-const main = async(  ) => {
-    const searches = new Searches();
-    let opt = 0;
+const main = async () => {
+  const searches = new Searches();
+  let opt = 0;
 
-    do {
-        opt = await inquirerMenu();
+  do {
+    opt = await inquirerMenu();
 
-        switch (opt) {
-            case 1:
-                const cityToSearch = await readInput('City:' ); 
-                
-                const placesResult = await searches.city( cityToSearch );
-                
-                const id = await displayPlaces( placesResult );
-                const selectedPlace = placesResult.find( ({id}) =>  id === id );
-
-                // Weather
-                // TODO: Weather //
-                
-                menuPlaceInfo( selectedPlace );
-                break;
-                
-                default:
-                    console.log('See you again!');
-                break;
-            case 2:
-                // TODO: Historical //
-                break
+    switch (opt) {
+      case 1: {
+        try {
+          const cityToSearch = await readInput('City:');
+          const placesResult = await searches.city(cityToSearch);
+          const id = await displayPlaces(placesResult);
+          const selectedPlace = placesResult.find(
+            ({ id: resultId }) => resultId === id,
+          );
+          menuPlaceInfo(selectedPlace);
+          // Weather
+          // TODO: Weather //
+        } catch (error) {
+          throw new Error('There was an error');
         }
+        break;
+      }
 
-        if ( opt !== 0 ) {
-            await pause();
-        } 
-            
-    } while (opt !== 0);
-}
+      case 2:
+        // TODO: Historical //
+        break;
+      default:
+        console.log('See you again!');
+        break;
+    }
+
+    if (opt !== 0) {
+      await pause();
+    }
+  } while (opt !== 0);
+};
 
 main();
