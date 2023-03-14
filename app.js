@@ -7,7 +7,7 @@ import {
   readInput,
   inquirerMenu,
   menuPlaceInfo,
-  displayPlaces,
+  displayPlaces
 } from './helpers/index.js';
 import { Searches } from './models/searches.js';
 
@@ -27,11 +27,15 @@ const main = async () => {
           const placesResult = await searches.city(cityToSearch);
           const id = await displayPlaces(placesResult);
           const selectedPlace = placesResult.find(
-            ({ id: resultId }) => resultId === id,
+            ({ id: resultId }) => resultId === id
           );
-          menuPlaceInfo(selectedPlace);
-          // Weather
-          // TODO: Weather //
+
+          const cityWeather = await searches.weatherPlace(
+            selectedPlace.lat,
+            selectedPlace.lng
+          );
+
+          menuPlaceInfo(selectedPlace, cityWeather);
         } catch (error) {
           throw new Error('There was an error');
         }
