@@ -1,42 +1,59 @@
+/* eslint-disable no-await-in-loop */
+// eslint-disable-next-line no-unused-vars
 import colors from 'colors';
-import { inquirerMenu } from './helpers/inquirer.js';
-import { pause } from './helpers/pause/pause.js';
-import { readInput } from './helpers/read-input/readInput.js';
+import * as dotenv from 'dotenv';
+import {
+  pause,
+  readInput,
+  inquirerMenu,
+  menuPlaceInfo,
+  displayPlaces
+} from './helpers/index.js';
+import { Searches } from './models/searches.js';
 
-const main = async(  ) => {
-    let opt = 0;
+dotenv.config();
 
-    do {
-        opt = await inquirerMenu();
+const main = async () => {
+  const searches = new Searches();
+  let opt = 0;
 
-        switch (opt) {
-            case 1:
-                // Show message
-                const place = await readInput('City:' ); 
-                console.log(place);
+  do {
+    opt = await inquirerMenu();
 
-                // Find places
+    switch (opt) {
+      case 1: {
+        try {
+          const cityToSearch = await readInput('City:');
+          const placesResult = await searches.city(cityToSearch);
+          const id = await displayPlaces(placesResult);
+          const selectedPlace = placesResult.find(
+            ({ id: resultId }) => resultId === id
+          );
 
-                // Select place
+          const cityWeather = await searches.weatherPlace(
+            selectedPlace.lat,
+            selectedPlace.lng
+          );
 
-                // Weather
-
-                // Show results
-
-                break;
-        
-            default:
-                break;
+          menuPlaceInfo(selectedPlace, cityWeather);
+        } catch (error) {
+          throw new Error('There was an error');
         }
+        break;
+      }
 
-        if ( opt !== 0 ) {
-            await pause();
-        } 
-            
-    } while (opt !== 0);
+      case 2:
+        // TODO: Historical //
+        break;
+      default:
+        console.log('See you again!');
+        break;
+    }
 
-
-
-}
+    if (opt !== 0) {
+      await pause();
+    }
+  } while (opt !== 0);
+};
 
 main();
