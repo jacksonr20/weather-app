@@ -1,5 +1,10 @@
 /* eslint-disable no-console */
-const menuPlaceInfo = ({ name, lat, lng }, { temp, min, max, desc }) => {
+const menuPlaceInfo = (
+  { name, lat, lng },
+  {
+    temp, min, max, desc
+  }
+) => {
   console.log('\nInfo of the city\n'.bold);
   console.log('City: '.gray, name);
   console.log('Lat: '.cyan, lat);
