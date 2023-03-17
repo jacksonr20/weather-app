@@ -9,12 +9,17 @@ import {
   menuPlaceInfo,
   displayPlaces
 } from './helpers/index.js';
-import { Searches } from './models/searches.js';
+import { Place } from './models/place.js';
+import { Weather } from './models/weather.js';
+import { Historical } from './models/historical.js';
 
 dotenv.config();
 
 const main = async () => {
-  const searches = new Searches();
+  const places = new Place();
+  const weather = new Weather();
+  const historical = new Historical();
+
   let opt = 0;
 
   do {
@@ -24,13 +29,18 @@ const main = async () => {
       case 1: {
         try {
           const cityToSearch = await readInput('City:');
-          const placesResult = await searches.city(cityToSearch);
+          const placesResult = await places.city(cityToSearch);
           const id = await displayPlaces(placesResult);
+
+          if (id === 0) throw new Error('There was an error with this');
+
           const selectedPlace = placesResult.find(
             ({ id: resultId }) => resultId === id
           );
 
-          const cityWeather = await searches.weatherPlace(
+          historical.addHistorical(selectedPlace);
+
+          const cityWeather = await weather.weatherPlace(
             selectedPlace.lat,
             selectedPlace.lng
           );
@@ -43,7 +53,12 @@ const main = async () => {
       }
 
       case 2:
-        // TODO: Historical //
+        historical.readCity();
+
+        historical.places.forEach((place, i) => {
+          const id = `${i + 1}.`.green;
+          console.log(`${id} ${place}`);
+        });
         break;
       default:
         console.log('See you again!');

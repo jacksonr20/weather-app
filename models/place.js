@@ -1,24 +1,13 @@
 /* eslint-disable no-console */
 /* eslint-disable camelcase */
 import axios from 'axios';
-class Searches {
-  constructor() {
-    // TODO: Read DB //
-  }
 
+class Place {
   get paramMapBox() {
     return {
       access_token: process.env.MAPBOX_KEY,
       language: 'es',
       limit: 2
-    };
-  }
-
-  get paramWeather() {
-    return {
-      appid: process.env.OPEN_WEATHER_KEY,
-      units: 'metric',
-      lang: 'es'
     };
   }
 
@@ -41,27 +30,6 @@ class Searches {
       return [];
     }
   }
-
-  async weatherPlace(lat, lon) {
-    try {
-      const instace = axios.create({
-        baseURL: process.env.OPEN_WEATHER_BASE_URL,
-        params: { ...this.paramWeather, lat, lon }
-      });
-
-      const resp = await instace.get();
-      const { weather, main } = resp.data;
-
-      return {
-        desc: weather[0].description,
-        min: main.temp_min,
-        max: main.temp_max,
-        temp: main.temp
-      };
-    } catch (error) {
-      console.log(error);
-    }
-  }
 }
 
-export { Searches };
+export { Place };
